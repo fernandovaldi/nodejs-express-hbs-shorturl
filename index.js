@@ -1,22 +1,38 @@
 const express = require('express');
 const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const mongoSanitize = require('express-mongo-sanitize');
+const cors = require('cors');
 const flash = require('connect-flash');
 const passport = require('passport');
 const { create } = require('express-handlebars');
 const csrf = require('csurf');
 const User = require('./models/User');
 require('dotenv').config();
-require('./database/db');
+const clientDB = require('./database/db');
 
 const app = express();
+
+const corsOptions = {
+    credentials: true,
+    origin: process.env.PATHHEROKU || '*',
+    methods: ['GET', 'POST']
+}
+
+app.use(cors())
 
 // express session - sesiones
 app.use(
     session({
-    secret: 'keyboard cat',
-    resave: false,
-    saveUninitialized: false,
-    name: 'secret-name-blablabla'
+        secret: process.env.SECRETSESSION,
+        resave: false,
+        saveUninitialized: false,
+        name: 'session-user',
+        store: MongoStore.create({
+            clientPromise: clientDB,
+            dbName: process.env.DBNAME
+        }),
+        cookie: { secure: true, maxAge: 30 * 24 * 60 * 60 * 1000 }
     })
 );
 
@@ -46,6 +62,8 @@ app.use(express.static(__dirname + "/public"));
 app.use(express.urlencoded({extended: true}));
     // de seguridad - pasa un token para asegurar que la información viene de la app, evitando inyecciones
 app.use(csrf());
+    // evitar inyecciones maliciosas en la DB
+app.use(mongoSanitize());
 
     //mi propio middleware, para que se pase el token de forma general, guarda en variables globales
 app.use((req, res, next) => {
