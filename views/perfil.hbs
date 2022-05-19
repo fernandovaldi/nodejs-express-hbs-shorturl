@@ -1,0 +1,16 @@
+<h1 class="text-center">{{user.userName}}</h1>
+<p class="text-center">Edita aquí tu perfil</p>
+<div class="my-2 text-center">
+    {{#if imagen}}
+        <img src="/img/perfiles/{{imagen}}" alt="perfil" class="rounded-circle my-5">
+        {{else}}
+        <img src="/img/perfiles/perfil.jpg" alt="perfil" class="rounded-circle my-5">
+    {{/if}}
+</div>
+
+<form action="/perfil?_csrf={{csrfToken}}" enctype="multipart/form-data" method="post">
+{{!-- en las imagenes el token tiene que viajar como query y no en el body --}}
+    {{!-- <input type="hidden" name="_csrf" value="{{csrfToken}}"> --}}
+    <input class="form-control mb-2" type="file" id="formFile" name="myFile" />
+    <button class="btn btn-dark my-2">Cambiar imagen</button>
+</form>

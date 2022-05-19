@@ -1,0 +1,23 @@
+{{#if url}}
+<h1>Modifica tu URL</h1>
+<form action="/editar/{{url._id}}" method="post">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <input value="{{url.origin}}" type="text" placeholder="Ingrese URL" name="origin" class="form-control my-2">
+    <button type="submit" class="btn btn-warning w-100 mb-2">
+        Editar URL
+    </button>
+    <a href="/" class="btn btn-danger w-100 mb-2">
+        Cancelar
+    </a>
+</form>
+
+{{else}}
+<h1>Agregue sus URL</h1>
+<form action="/" method="post">
+    <input type="hidden" name="_csrf" value="{{csrfToken}}">
+    <input type="text" placeholder="Ingrese URL" name="origin" class="form-control my-2">
+    <button type="submit" class="btn btn-primary w-100 mb-2">
+        Agregar URL
+    </button>
+</form>
+{{/if}}

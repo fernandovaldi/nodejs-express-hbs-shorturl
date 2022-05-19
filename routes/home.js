@@ -1,14 +1,19 @@
 const express = require('express');
+const { leerUrls, agregarUrl, eliminarUrl, editarUrlForm, editarUrl, redireccionamiento } = require('../controllers/homeController');
+const { formPerfil, editarFotoPerfil } = require('../controllers/perfilController');
+const urlValidar = require('../middlewares/urlValidar');
+const verificarUser = require('../middlewares/verificarUser');
 const router = express.Router();
 
-router.get("/", (req, res) => {
-        const urls = [
-            {origin: "www.google.com/fernando1", shortURL: "fjaasda1"},
-            {origin: "www.google.com/fernando2", shortURL: "fjaasda2"},
-            {origin: "www.google.com/fernando3", shortURL: "fjaasda3"},
-            {origin: "www.google.com/fernando4", shortURL: "fjaasda4"}
-        ]
-        res.render('home', {urls: urls});
-});
+router.get("/", verificarUser, leerUrls);
+router.post("/", verificarUser, urlValidar, agregarUrl);
+router.get("/eliminar/:id", verificarUser, eliminarUrl);
+router.get("/editar/:id", verificarUser, editarUrlForm);
+router.post("/editar/:id", verificarUser, urlValidar, editarUrl);
+
+router.get("/perfil", verificarUser, formPerfil);
+router.post("/perfil", verificarUser, editarFotoPerfil);
+// redireccionamiento de la short URL
+router.get("/:shortUrl", redireccionamiento)
 
 module.exports = router;
